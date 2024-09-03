@@ -35,7 +35,7 @@ def extract_text(fname, start, end):
     doc = pymupdf.open(fname)
     text = ""
     for i,page in enumerate(doc[start:end]):
-        print("Processing page " + str(i) +" of " + str(end-start))
+        print("Processing page " + str(i) +" of " + str(end-start), flush=True)
         page_text = ""
         bboxes = column_boxes(page, footer_margin=50, no_image_text=True)
         for rect in bboxes:
@@ -72,7 +72,7 @@ def chunk_and_reconstruct(text, prefix, chunk_size=100):
     for i in range(0, len(fragments), chunk_size):
         chunk_text = " ".join(fragments[i:i+chunk_size])
         fname = audio_chunk_dir + "/" + "mp3_index_"+str(i)+".mp3"
-        print("Processing file " + fname + " ... (" + str(i) +","+str(len(fragments))+")")
+        print("Processing file " + fname + " ... (" + str(i) +","+str(len(fragments))+")", flush=True)
         tts_api_request(fname, chunk_text)
         mp3_fragments.append(fname)
 
@@ -82,7 +82,7 @@ def chunk_and_reconstruct(text, prefix, chunk_size=100):
         sound = AudioSegment.from_mp3(mp3)
         combined += sound
     combined.export(audio_chunk_dir+"/"+prefix+"_FINAL_OUTPUT.mp3", format="mp3")
-    print("Saved to: " + str(audio_chunk_dir+"/"+prefix+"FINAL_OUTPUT.mp3"))
+    print("Saved to: " + str(audio_chunk_dir+"/"+prefix+"_FINAL_OUTPUT.mp3"), flush = True)
 
 def main():
     parser = argparse.ArgumentParser()
