@@ -4,5 +4,5 @@ The tool will attempt to clean up the pdf file by removing labels and making sur
 usage:
 
 ```
-python pdf_to_text.py /path/to/file.pdf start_page stop_page
+python pdf_to_text.py /path/to/file.pdf start_page stop_page --prefix <file/folder prefix>
 ```
