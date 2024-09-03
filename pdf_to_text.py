@@ -48,6 +48,7 @@ def extract_text(fname, start, end):
 # fname is the file to write mp3 to
 # text should be delivered in resonable sized chunks that the api chosen can handle
 def tts_api_request(fname, text):
+    retry_delay = 2
     for attempt in range(5):
         try:
             tts = gTTS(text, lang='en', slow=False)
