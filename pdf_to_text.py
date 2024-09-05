@@ -48,19 +48,16 @@ def extract_text(fname, start, end):
 # fname is the file to write mp3 to
 # text should be delivered in resonable sized chunks that the api chosen can handle
 def tts_api_request(fname, text):
-    retry_delay = 2
-    for attempt in range(5):
+    retry_delay = 30
+    for attempt in range(8):
         try:
             tts = gTTS(text, lang='en', slow=False)
             tts.save(fname)
             return
         except gTTSError as e:
-            if "429 (Too Many Requests)" in str(e):
-                print(f"Rate limit hit, retrying in {retry_delay} seconds...")
-                time.sleep(retry_delay)
-                retry_delay *= 2  # Exponential backoff
-            else:
-                raise
+            print(f"Rate limit hit or bad connection, retrying in {retry_delay} seconds...")
+            time.sleep(retry_delay)
+            retry_delay *= 2  # Exponential backoff
         except Exception as e:
             raise  # Re-raise any other exceptions
 
@@ -76,7 +73,9 @@ def chunk_and_reconstruct(text, prefix, chunk_size=100):
         print("Processing file " + fname + " ... (" + str(i) +","+str(len(fragments))+")", flush=True)
         tts_api_request(fname, chunk_text)
         mp3_fragments.append(fname)
+    return mp3_fragments, audio_chunk_dir
 
+def combine_audio_mp3s(mp3_fragments, audio_chunk_dir, prefix):
     print("Combining audio segments...")
     combined = AudioSegment.empty()
     for mp3 in mp3_fragments:
@@ -98,11 +97,9 @@ def main():
     text = extract_text(args.pdf_file, args.start, args.end)
     with open(text_dir+"/"+args.prefix+"_output.txt", "w") as f:
         f.write(text)
-    chunk_and_reconstruct(text, args.prefix)
+    mp3s, chunk_dir = chunk_and_reconstruct(text, args.prefix)
+    combine_audio_mp3s(mp3s, chunk_dir, args.prefix)
 
 if __name__ == "__main__":
     main()   
-
-
-
-        
+ 

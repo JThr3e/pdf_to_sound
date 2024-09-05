@@ -2,7 +2,6 @@ import requests
 import json
 import sys
 
-#model = "llama3-8b"
 def samba_process_data(model, system, query):
     url = 'https://fast-api.snova.ai/v1/chat/completions'
 
